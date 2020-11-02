@@ -1,5 +1,6 @@
 const express = require('express');
 const mysql = require('mysql');
+var bodyparser = require("body-parser");
 
 // Creating connection to SQL server
 const sqlDb = mysql.createConnection({
@@ -21,8 +22,12 @@ sqlDb.connect((err) => {
 });
 
 const app = express();
+app.use(express.json());
+app.use(bodyparser.urlencoded({extended:true}))
+
 //Create new users
 app.post('/users', (req, res) => {
+   
     let id = req.body;
     var sql = 'INSERT INTO Users SET ?';
     sqlDb.query(sql, id, (err, result) => {
@@ -30,9 +35,13 @@ app.post('/users', (req, res) => {
             throw err;
         } else{
             console.log("User data inserted");
+            console.log(sqlDb);
             res.send(result)
         }
     });
+});
+app.get('/users', (req, res) => {
+
 });
 //Validate user 
 //fix

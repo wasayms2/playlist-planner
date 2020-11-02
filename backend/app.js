@@ -47,10 +47,10 @@ app.get('/users', (req, res) => {
 //fix
 app.post('/findusers', (req, res) => {
     let id = req.body;
-    let user = id.UserId;
-    console.log(user);
-    var sql = 'SELECT Username, Password FROM Users WHERE UserID like user';
-    sqlDb.query(sql, (err, result) => {
+    let user = id.userid;
+    console.log(id);
+    var sql = "SELECT Username, Password FROM Users WHERE UserId = 'user'";
+    sqlDb.query(sql, id, (err, result) => {
         if (err) {
             throw err;
         } else {

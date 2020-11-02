@@ -46,7 +46,10 @@ app.get('/users', (req, res) => {
 //Validate user 
 //fix
 app.get('/users', (req, res) => {
-    let sql = 'SELECT UserID FROM Users';
+    let id = req.body;
+    let userN = id.Username;
+    let passW = id.Password;
+    let sql = 'SELECT Username, Password FROM Users WHERE Username LIKE userN and Password LIKE passW';
     sqlDb.query(sql, (err, result) => {
         if (err) {
             throw err;
@@ -59,7 +62,8 @@ app.get('/users', (req, res) => {
 //Finding songs
 app.post('/findsongs', (req, res) => {
     let id = req.body;
-    var sql = 'SELECT title FROM Songs WHERE title LIKE id';
+    let t = id.Title;
+    var sql = 'SELECT Title, SongID FROM Songs WHERE Title LIKE t';
     sqlDb.query(sql, id, (err, result) => {
         if (err) {
             throw err;

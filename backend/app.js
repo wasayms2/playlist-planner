@@ -47,9 +47,9 @@ app.get('/users', (req, res) => {
 //fix
 app.post('/findusers', (req, res) => {
     let id = req.body;
-    let user = id.userid;
-    console.log(id);
-    var sql = "SELECT Username, Password FROM Users WHERE UserId = 'user'";
+    let user = id.UserId;
+    console.log(user);
+    var sql = "SELECT Username, Password FROM Users WHERE UserId = " + sqlDb.escape(user);
     sqlDb.query(sql, id, (err, result) => {
         if (err) {
             throw err;
@@ -63,7 +63,7 @@ app.post('/findusers', (req, res) => {
 app.post('/findsongs', (req, res) => {
     let id = req.body;
     let t = id.Title;
-    var sql = 'SELECT Title, SongID FROM Songs WHERE Title LIKE t';
+    var sql = 'SELECT title, SongID FROM Songs WHERE title LIKE ' + sqlDb.escape(t);
     sqlDb.query(sql, id, (err, result) => {
         if (err) {
             throw err;
@@ -89,7 +89,7 @@ app.post('/createplaylist', (req, res) => {
 //Add songs to playlist
 app.post('/addtoplaylist', (req, res) => {
     let id = req.body;
-    var sql = 'INSERT INTO SongsInPlaylist(SongID) SET ?';
+    var sql = 'INSERT INTO SongsInPlaylist SET ?';
     sqlDb.query(sql, id, (err, result) => {
         if (err) {
             throw err;
@@ -100,9 +100,9 @@ app.post('/addtoplaylist', (req, res) => {
     });
 });
 //Delete Playlist
-app.post('/deleteplaylist', (req, res) => {
+app.post('/delplaylist', (req, res) => {
     let id = req.body;
-    var sql = 'DELETE FROM Playlists, SongsInPlaylist WHERE PlaylistID = id.PlaylistID';
+    var sql = 'DELETE FROM Playlists, SongsInPlaylist WHERE PlaylistID = ' + sqlDb.escape(id.PlaylistID);
     sqlDb.query(sql, id, (err, result) => {
         if (err) {
             throw err;
@@ -115,7 +115,7 @@ app.post('/deleteplaylist', (req, res) => {
 //Find Playlist
 app.post('/findplaylist', (req, res) => {
     let id = req.body;
-    var sql = 'Select PlaylistID From Playlists p JOIN Users u on u.UserID = p.UserID WHERE PlaylistID = id.PlaylistID ';
+    var sql = 'Select PlaylistID From Playlists p JOIN Users u on u.UserID = p.UserID WHERE PlaylistID = ' + sqlDB.escape(id.PlaylistID);
     sqlDb.query(sql, id, (err, result) => {
         if (err) {
             throw err;
@@ -134,6 +134,18 @@ app.post('/userdob', (req, res) => {
             throw err;
         } else{
             console.log("USER DOB data found");
+            res.send(result)
+        }
+    });
+});
+//find list of users and number of playlists each has
+app.get('/viewusers', (req, res) => {
+    let sql = 'SELECT UserID, count(UNIQUE PlaylistID) FROM Users u Join Playlists p on u.UserID = p.UserID GROUPBY userID, count(UNIQUE PlaylistID)'
+    sqlDb.query(sql, (err, result) => {
+        if (err) {
+            throw err;
+        } else {
+            console.log('Users and playlists found');
             res.send(result)
         }
     });

@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Axios from 'axios';
 import Navigation from '../Components/Navigation';
+import SongBrowse from '../Components/SongBrowse';
 
 function SearchSongs({userId, setUserId}) {
     const [songs, setSongs] = useState([]);
+    const [search, setSearch] = useState('');
 
     const instance = Axios.create({
         timeout: 1000,
@@ -16,11 +18,13 @@ function SearchSongs({userId, setUserId}) {
     });
 
     useEffect(() => {
-        instance.get(`/viewsongs`).then((res) => {
+        instance.post(`/findsongs`, {
+            Title: `%${search}%`
+        }).then((res) => {
             console.log(res);
             setSongs(res.data)
         });
-    }, [])
+    }, [search])
 
     return (
         <div>
@@ -28,9 +32,10 @@ function SearchSongs({userId, setUserId}) {
             <input
                 type='text'
                 placeholder='Song Name'
-                name='sngname'
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
                 />
-            {songs.map((title) => (<p>{title.title}</p>))}
+            {songs.map((song) => (<SongBrowse title={song.title} id={song.SongID}/>))}
         </div>
     );
 }

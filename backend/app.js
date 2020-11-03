@@ -45,12 +45,12 @@ app.get('/users', (req, res) => {
 });
 //Validate user 
 //fix
-app.get('/users', (req, res) => {
+app.post('/findusers', (req, res) => {
     let id = req.body;
-    let userN = id.Username;
-    let passW = id.Password;
-    let sql = 'SELECT Username, Password FROM Users WHERE Username LIKE userN and Password LIKE passW';
-    sqlDb.query(sql, (err, result) => {
+    let user = id.userid;
+    console.log(id);
+    var sql = "SELECT Username, Password FROM Users WHERE UserId = 'user'";
+    sqlDb.query(sql, id, (err, result) => {
         if (err) {
             throw err;
         } else {

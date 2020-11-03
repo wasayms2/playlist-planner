@@ -3,8 +3,9 @@ import Navigation from '../Components/Navigation';
 
 function CreateSongs({userId, setUserId}) {
     return (
-        <div>
+        <>
             <Navigation />
+        <div style={{margin: '20px'}}>
             <input
                 type='text'
                 placeholder='Title'
@@ -78,6 +79,7 @@ function CreateSongs({userId, setUserId}) {
             
             <button type='submit'>Create New Song</button>
         </div>
+        </>
     );
 }
 

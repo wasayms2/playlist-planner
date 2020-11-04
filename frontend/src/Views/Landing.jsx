@@ -51,10 +51,12 @@ function Landing({userId, setUserId}) {
             </>
     }
     return (
-        <div>
+        <>
             <Navigation />
+        <div style={{margin: '20px'}}>
             {page}
         </div>
+        </>
     );
 }
 

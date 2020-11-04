@@ -1,37 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import Axios from 'axios';
 import Navigation from '../Components/Navigation';
+import SongBrowse from '../Components/SongBrowse';
 
-function SearchSongs({userId, setUserId}) {
+function SearchSongs({ userId, setUserId, api }) {
     const [songs, setSongs] = useState([]);
-
-    const instance = Axios.create({
-        timeout: 1000,
-        mode: 'no-cors',
-        headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Content-Type': 'application/json',
-        },
-        credentials: 'same-origin'
-    });
+    const [search, setSearch] = useState('');
 
     useEffect(() => {
-        instance.get(`/viewsongs`).then((res) => {
-            console.log(res);
+        api.post(`/findsongs`, {
+            Title: `%${search}%`
+        }).then((res) => {
             setSongs(res.data)
         });
-    }, [])
+    }, [search])
 
     return (
-        <div>
+        <>
             <Navigation />
+        <div style={{margin: '20px'}}>
             <input
                 type='text'
                 placeholder='Song Name'
-                name='sngname'
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
                 />
-            {songs.map((title) => (<p>{title.title}</p>))}
+            {songs.map((song) => (<SongBrowse title={song.title} id={song.SongID} key={song.SongID}/>))}
         </div>
+        </>
     );
 }
 

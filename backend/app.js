@@ -102,7 +102,11 @@ app.post('/addtoplaylist', (req, res) => {
 //Delete Playlist
 app.post('/delplaylist', (req, res) => {
     let id = req.body;
-    var sql = 'DELETE FROM Playlists, SongsInPlaylist WHERE PlaylistID = ' + sqlDb.escape(id.PlaylistID);
+    // var toUse = id.PlaylistID;
+    // var sql = 'DELETE FROM Playlists, SongsInPlaylist WHERE PlaylistID = toUse' 
+    var sql = "DELETE FROM Playlists WHERE PlaylistID = " + sqlDb.escape(id.PlaylistID);
+    var sql = "DELETE FROM SongsInPlaylist WHERE PlaylistID = " + sqlDb.escape(id.PlaylistID);
+
     sqlDb.query(sql, id, (err, result) => {
         if (err) {
             throw err;
@@ -112,6 +116,22 @@ app.post('/delplaylist', (req, res) => {
         }
     });
 });
+
+//Change Playlist Name
+app.post('/changeTitle', (req, res) => {
+    let id = req.body;
+    var sql = "Update Playlists Set Name = " +  sqlDb.escape(id.Name) + " WHERE PlaylistID = " + sqlDb.escape(id.PlaylistID);
+
+    sqlDb.query(sql, id, (err, result) => {
+        if (err) {
+            throw err;
+        } else{
+            console.log("Playlist name updated");
+            res.send(result)
+        }
+    });
+});
+
 //Find Playlist
 app.post('/findplaylist', (req, res) => {
     let id = req.body;

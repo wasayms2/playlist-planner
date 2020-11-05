@@ -13,10 +13,11 @@ import CreateSongs from './Views/CreateSongs';
 import './App.css';
 
 function App() {
-  const [userId, setUserId] = useState(undefined);
+  const [userId, setUserId] = useState(1234);
+  const [playlists, setPlaylists] = useState([]);
 
   const api = Axios.create({
-    timeout: 1000,
+    timeout: 5000,
     mode: 'no-cors',
     headers: {
         'Access-Control-Allow-Origin': '*',
@@ -33,13 +34,13 @@ function App() {
             <Landing userId={userId} setUserId={setUserId} api={api}/>
           </Route>
           <Route path="/playlists">
-            <UserPlaylists userId={userId} setUserId={setUserId} api={api}/>
+            <UserPlaylists userId={userId} playlists={playlists} setPlaylists={setPlaylists} api={api}/>
           </Route>
           <Route path="/playlist-search">
             <SearchPlaylists userId={userId} setUserId={setUserId} api={api}/>
           </Route>
           <Route path="/song-search">
-            <SearchSongs userId={userId} setUserId={setUserId} api={api}/>
+            <SearchSongs userId={userId} setUserId={setUserId} api={api} playlists={playlists}/>
           </Route>
           <Route path="/new-song">
             <CreateSongs userId={userId} setUserId={setUserId} api={api}/>

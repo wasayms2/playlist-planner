@@ -1,37 +1,46 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Navigation from '../Components/Navigation';
 import PlaylistCard from '../Components/PlaylistCard';
+import { toISOStringLocal } from '../Utils/GetDate';
 
-function UserPlaylists({userId, setUserId}) {
-    const playlists = [{
-        id: 1,
-        title: 'songssss',
-        songs: [
-            {
-                title: 'Hey, Soul Sister',
-                id: 1,
-            },
-            {
-                title: 'Bad Romance',
-                id: 4,
-            },
-            {
-                title: 'Just the way you are',
-                id: 5,
-            },
-        ]
-    },{
-        id: 2,
-        title: 'yuh',
-        songs: [
-        ]
-    },];
+function UserPlaylists({ userId, api, playlists, setPlaylists }) {
+    const [name, setName] = useState('');
+
+    let updatePlaylists = () =>{
+        api.post(`/findplaylist`, {
+            UserID: userId
+        }).then((res) => {
+            setPlaylists(res.data)
+            console.log(res.data)
+        });
+    };
+
+    useEffect(() => {
+        updatePlaylists();
+    }, []);
+
+    let createPlaylist = () => {
+        api.post(`/createplaylist`, {
+            Name: name,
+            Date: toISOStringLocal(new Date()),
+            UserID: userId,
+        }).then((res) => {
+            console.log(res.data);
+            updatePlaylists();
+        });
+    };
+
     return (
         <>
             <Navigation />
         <div style={{margin: '20px'}}>
             <h2>My Playlists</h2>
-            {playlists.map((playlist) => (<PlaylistCard id={playlist.id} songs={playlist.songs} title={playlist.title}/>))}
+            New Playlist:
+            <input style={{margin: '10px'}} type='text' placeholder='Playlist Name' value={name} onChange={(e) => (setName(e.target.value))} />
+            <button style={{margin: '10px'}} onClick={createPlaylist}>
+                Create!
+            </button>
+            {playlists && playlists.map((playlist) => (<PlaylistCard id={playlist.PlaylistID} songs={[]} title={playlist.Name} api={api} update={updatePlaylists}/>))}
         </div>
         </>
     );

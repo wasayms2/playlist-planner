@@ -1,14 +1,7 @@
 import React, { useState } from 'react';
 
 function SongBrowse({ title, id, playlists, remove, playlistId }) {
-    playlists = [{
-        id: 1,
-        name: 'songssss'
-    },{
-        id: 2,
-        name: 'yuh'
-    },];
-    const [addPlaylistId, setAddPlaylistId] = useState(playlists[0].id);
+    const [addPlaylistId, setAddPlaylistId] = useState(playlists[0].PlaylistID);
     let onAdd = (e) => (console.log(`${id}, ${addPlaylistId}`));
     let onDelete = (e) => (console.log(`${id}, ${playlistId}`));
 
@@ -17,9 +10,9 @@ function SongBrowse({ title, id, playlists, remove, playlistId }) {
             Add to playlist:
             <select style={{margin: '5px'}}
                 onChange={(e => setAddPlaylistId(e.target.value))}>
-                {playlists.map((playlist) => (
-                    <option value={playlist.id}>
-                        {playlist.name}
+                {playlists && playlists.map((playlist) => (
+                    <option value={playlist.PlaylistID}>
+                        {playlist.Name}
                     </option>
                 ))}
             </select>

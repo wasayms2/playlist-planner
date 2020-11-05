@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Navigation from '../Components/Navigation';
 import SongBrowse from '../Components/SongBrowse';
 
-function SearchSongs({ userId, setUserId, api }) {
+function SearchSongs({ api, playlists }) {
     const [songs, setSongs] = useState([]);
     const [search, setSearch] = useState('');
 
@@ -24,7 +24,7 @@ function SearchSongs({ userId, setUserId, api }) {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 />
-            {songs.map((song) => (<SongBrowse title={song.title} id={song.SongID} key={song.SongID}/>))}
+            {songs.map((song) => (<SongBrowse title={song.title} id={song.SongID} key={song.SongID} playlists={playlists}/>))}
         </div>
         </>
     );

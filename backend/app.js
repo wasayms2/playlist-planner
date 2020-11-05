@@ -105,7 +105,6 @@ app.post('/delplaylist', (req, res) => {
     // var toUse = id.PlaylistID;
     // var sql = 'DELETE FROM Playlists, SongsInPlaylist WHERE PlaylistID = toUse' 
     var sql = "DELETE FROM Playlists WHERE PlaylistID = " + sqlDb.escape(id.PlaylistID);
-    var sql = "DELETE FROM SongsInPlaylist WHERE PlaylistID = " + sqlDb.escape(id.PlaylistID);
 
     sqlDb.query(sql, id, (err, result) => {
         if (err) {
@@ -135,7 +134,7 @@ app.post('/changeTitle', (req, res) => {
 //Find Playlist
 app.post('/findplaylist', (req, res) => {
     let id = req.body;
-    var sql = 'Select PlaylistID From Playlists p JOIN Users u on u.UserID = p.UserID WHERE PlaylistID = ' + sqlDB.escape(id.PlaylistID);
+    var sql = 'Select PlaylistID, Name From Playlists p JOIN Users u on u.UserId = p.UserID WHERE p.UserID = ' + sqlDb.escape(id.UserID);
     sqlDb.query(sql, id, (err, result) => {
         if (err) {
             throw err;

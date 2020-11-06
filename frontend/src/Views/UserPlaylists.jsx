@@ -3,17 +3,8 @@ import Navigation from '../Components/Navigation';
 import PlaylistCard from '../Components/PlaylistCard';
 import { toISOStringLocal } from '../Utils/GetDate';
 
-function UserPlaylists({ userId, api, playlists, setPlaylists }) {
+function UserPlaylists({ userId, api, playlists, setPlaylists, updatePlaylists }) {
     const [name, setName] = useState('');
-
-    let updatePlaylists = () =>{
-        api.post(`/findplaylist`, {
-            UserID: userId
-        }).then((res) => {
-            setPlaylists(res.data)
-            console.log(res.data)
-        });
-    };
 
     useEffect(() => {
         updatePlaylists();
@@ -27,6 +18,7 @@ function UserPlaylists({ userId, api, playlists, setPlaylists }) {
         }).then((res) => {
             console.log(res.data);
             updatePlaylists();
+            setName('');
         });
     };
 

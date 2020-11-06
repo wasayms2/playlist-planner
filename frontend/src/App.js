@@ -26,6 +26,15 @@ function App() {
     credentials: 'same-origin'
   });
 
+  let updatePlaylists = () =>{
+    api.post(`/findplaylist`, {
+        UserID: userId
+    }).then((res) => {
+        setPlaylists(res.data)
+        console.log(res.data)
+    });
+  };
+
   return (
     <div className="App">
       <Router>
@@ -34,13 +43,13 @@ function App() {
             <Landing userId={userId} setUserId={setUserId} api={api}/>
           </Route>
           <Route path="/playlists">
-            <UserPlaylists userId={userId} playlists={playlists} setPlaylists={setPlaylists} api={api}/>
+            <UserPlaylists userId={userId} playlists={playlists} setPlaylists={setPlaylists} api={api} updatePlaylists={updatePlaylists}/>
           </Route>
           <Route path="/playlist-search">
-            <SearchPlaylists userId={userId} setUserId={setUserId} api={api}/>
+            <SearchPlaylists userId={userId} setUserId={setUserId} api={api} updatePlaylists={updatePlaylists}/>
           </Route>
           <Route path="/song-search">
-            <SearchSongs userId={userId} setUserId={setUserId} api={api} playlists={playlists}/>
+            <SearchSongs userId={userId} setUserId={setUserId} api={api} playlists={playlists} updatePlaylists={updatePlaylists}/>
           </Route>
           <Route path="/new-song">
             <CreateSongs userId={userId} setUserId={setUserId} api={api}/>

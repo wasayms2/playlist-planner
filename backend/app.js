@@ -203,7 +203,7 @@ app.post('/userleaderboard', (req, res) => {
     let tid = req.body;
 });
 //find list of users and number of playlists each has
-app.post('/viewusers', (req, res) => {
+app.get('/viewusers', (req, res) => {
     let sql = 'SELECT Username, COUNT(PlaylistID) FROM Users NATURAL JOIN Playlists GROUP BY UserId';
     sqlDb.query(sql, (err, result) => {
         if (err) {

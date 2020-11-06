@@ -62,9 +62,10 @@ app.post('/findusers', (req, res) => {
 });
 app.post('/findsongs', (req, res) => {
     let id = req.body;
-    let t = id.Title;
-    let a = id.Artist;
-    var sql = 'SELECT title, artist, SongID FROM Songs WHERE title = %' + sqlDb.escape(t) + '% or artist = ' + sqlDb.escape(a); 
+    let t = id.Search;
+    let a = id.Search;
+    let sql = 'SELECT title, artist, SongID FROM Songs WHERE title LIKE "%' + sqlDb.escape(t) + '%" or artist LIKE "%' + sqlDb.escape(a) + '%"';
+    sql = sql.replace(/'/g, "");
     sqlDb.query(sql, id, (err, result) => {
         if (err) {
             throw err;

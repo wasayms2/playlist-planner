@@ -33,6 +33,9 @@ function Landing({userId, setUserId, api, username, setUsername }) {
             console.log(res.data)
             setUserId(res.data[0].UserId)
         });
+        setPass('');
+        setDOB('');
+        setEmail('');
     };
 
     let page = 
@@ -89,10 +92,17 @@ function Landing({userId, setUserId, api, username, setUsername }) {
                 <button type='submit' onClick={createUser}>Create New User</button>
             </div>
         </>;
+
+    let logout = () => {
+        setUserId(undefined);
+    }    
+
     if (typeof userId !== 'undefined') {
         page =
             <>
                 Welcome {username}!
+                <br/>
+                <button onClick={logout}>Logout</button>
             </>
     }
     return (

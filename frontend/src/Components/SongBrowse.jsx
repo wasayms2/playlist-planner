@@ -6,8 +6,6 @@ function SongBrowse({ title, artist, id, playlists, remove, playlistId, api }) {
         defaultVal = playlists[0].PlaylistID
     }
 
-    let deleted = 0;
-
     const [addPlaylistId, setAddPlaylistId] = useState(defaultVal);
     let onAdd = (e) => {
         console.log(`${id}, ${addPlaylistId}`);
@@ -57,12 +55,7 @@ function SongBrowse({ title, artist, id, playlists, remove, playlistId, api }) {
         }}>
         <div>{title} (by {artist})</div>
         {action}
-        {deleted}
     </div>;
-
-    if (deleted === 1) {
-        card = undefined;
-    }
 
     return (<>{card}</>);
 }

@@ -23,15 +23,15 @@ function Navigation() {
                     <li>
                         <Link to="/playlists">My Playlists</Link>
                     </li>
-                    <li>
+                    {/* <li>
                         <Link to="/playlist-search">Search Playlists</Link>
-                    </li>
+                    </li> */}
                     <li>
                         <Link to="/song-search">Search Songs</Link>
                     </li>
-                    <li>
+                    {/* <li>
                         <Link to="/new-song">Create Songs</Link>
-                    </li>
+                    </li> */}
                 </ul>
             </nav>
         </header>

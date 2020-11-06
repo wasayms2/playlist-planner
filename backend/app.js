@@ -218,7 +218,7 @@ app.get('/viewusers', (req, res) => {
 
 //find list of popular songs
 app.get('/popularsongs', (req, res) => {
-    let sql = 'SELECT Title, COUNT(PlaylistID) FROM SongsInPlaylist NATURAL JOIN Songs GROUP BY SongId';
+    let sql = 'SELECT Title, COUNT(PlaylistID) FROM SongsInPlaylist NATURAL JOIN Songs GROUP BY SongId  ORDER BY COUNT(PlaylistID) DESC';
     sqlDb.query(sql, (err, result) => {
         if (err) {
             throw err;

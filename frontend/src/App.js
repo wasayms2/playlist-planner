@@ -10,10 +10,11 @@ import UserPlaylists from './Views/UserPlaylists';
 import SearchPlaylists from './Views/SearchPlaylists';
 import SearchSongs from './Views/SearchSongs';
 import CreateSongs from './Views/CreateSongs';
+import Leaderboard from './Views/Leaderboard';
 import './App.css';
 
 function App() {
-  const [userId, setUserId] = useState(1234);
+  const [userId, setUserId] = useState(undefined);
   const [playlists, setPlaylists] = useState([]);
 
   const api = Axios.create({
@@ -53,6 +54,9 @@ function App() {
           </Route>
           <Route path="/new-song">
             <CreateSongs userId={userId} setUserId={setUserId} api={api}/>
+          </Route>
+          <Route path="/leaderboard">
+            <Leaderboard userId={userId} setUserId={setUserId} api={api}/>
           </Route>
         </Switch>
       </Router>

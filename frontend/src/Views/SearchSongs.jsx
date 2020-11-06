@@ -8,7 +8,7 @@ function SearchSongs({ api, playlists, updatePlaylists }) {
 
     useEffect(() => {
         api.post(`/findsongs`, {
-            Title: `%${search}%`
+            Title: `${search}`
         }).then((res) => {
             setSongs(res.data)
         });

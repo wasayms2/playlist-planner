@@ -162,7 +162,7 @@ app.post('/changeTitle', (req, res) => {
 //Find Playlist
 app.post('/findplaylist', (req, res) => {
     let id = req.body;
-    var sql = 'Select PlaylistID, Name From Playlists p JOIN Users u on u.UserId = p.UserID WHERE p.UserID = ' + sqlDb.escape(id.UserID);
+    var sql = 'Select p.PlaylistID, p.Name, count(UNIQUE sip.SongID) From SongsInPlaylist sip Natural Join Playlists p JOIN Users u on u.UserId = p.UserID WHERE p.UserID = ' + sqlDb.escape(id.UserID);
     sqlDb.query(sql, id, (err, result) => {
         if (err) {
             throw err;

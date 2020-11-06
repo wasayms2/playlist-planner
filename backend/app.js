@@ -215,6 +215,20 @@ app.get('/viewusers', (req, res) => {
         }
     });
 });
+
+//find list of popular songs
+app.get('/popularsongs', (req, res) => {
+    let sql = 'SELECT Title, COUNT(PlaylistID) FROM SongsInPlaylist NATURAL JOIN Songs GROUP BY SongId';
+    sqlDb.query(sql, (err, result) => {
+        if (err) {
+            throw err;
+        } else {
+            console.log('Popular songs returned');
+            res.send(result)
+        }
+    });
+});
+
 //question - should this be in the post route
 app.get('/viewsongs', (req, res) => {
     let sql = 'SELECT title FROM Songs';

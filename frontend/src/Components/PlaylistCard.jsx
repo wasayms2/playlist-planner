@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import SongBrowse from './SongBrowse';
 
 function PlaylistCard({ id, title, songs, api, update }) {
@@ -37,7 +37,7 @@ function PlaylistCard({ id, title, songs, api, update }) {
                 </button>
             </h2>
             {songs.map((song) => (<SongBrowse title={song.title} id={song.id} remove={true} playlistId={id}/>))}
-            {songs.length == 0 && <p>This playlist is empty...</p>}
+            {songs.length === 0 && <p>This playlist is empty...</p>}
         </div>
     );
 }

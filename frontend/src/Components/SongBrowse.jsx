@@ -1,9 +1,19 @@
 import React, { useState } from 'react';
 
-function SongBrowse({ title, id, playlists, remove, playlistId }) {
+function SongBrowse({ title, id, playlists, remove, playlistId, api }) {
     const [addPlaylistId, setAddPlaylistId] = useState(playlists[0].PlaylistID);
-    let onAdd = (e) => (console.log(`${id}, ${addPlaylistId}`));
-    let onDelete = (e) => (console.log(`${id}, ${playlistId}`));
+    let onAdd = (e) => {
+        console.log(`${id}, ${addPlaylistId}`);
+        api.post(`/addtoplaylist`, {
+            PlaylistID: addPlaylistId,
+            SongID: id,
+        }).then((res) => {
+            console.log(res.data);
+        });
+    };
+    let onDelete = (e) => {
+        console.log(`${id}, ${playlistId}`);
+    };
 
     let action = 
         <div>

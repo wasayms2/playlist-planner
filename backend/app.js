@@ -60,8 +60,21 @@ app.post('/findusers', (req, res) => {
         }
     });
 });
-//Finding songs
 app.post('/findsongs', (req, res) => {
+    let id = req.body;
+    let t = id.Title;
+    var sql = 'SELECT title, SongID FROM Songs WHERE title = %' + sqlDb.escape(t);
+    sqlDb.query(sql, id, (err, result) => {
+        if (err) {
+            throw err;
+        } else{
+            console.log("songs found");
+            res.send(result)
+        }
+    });
+});
+//Finding songs in playlist
+app.post('/findsongsinplaylist', (req, res) => {
     let id = req.body;
     let pid = id.PlaylistID;
     var sql = 'SELECT SongId, title, artist FROM Songs s Join SongsInPlaylist sp on s.SongId = sp.SongId WHERE sp.PlaylistID = ' + sqlDb.escape(pid);
@@ -184,6 +197,9 @@ app.post('/userdob', (req, res) => {
             res.send(result)
         }
     });
+});
+app.post('/userleaderboard', (req, res) => {
+    let tid = req.body;
 });
 //find list of users and number of playlists each has
 app.get('/viewusers', (req, res) => {

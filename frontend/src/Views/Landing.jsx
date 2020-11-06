@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import Navigation from '../Components/Navigation';
 
-function Landing({userId, setUserId, api}) {
-    const [username, setUsername] = useState(undefined);
+function Landing({userId, setUserId, api, username, setUsername }) {
     const [pass, setPass] = useState(undefined);
     const [dob, setDOB] = useState(undefined);
     const [email, setEmail] = useState(undefined);
@@ -19,7 +18,8 @@ function Landing({userId, setUserId, api}) {
                 Password: pass,
             }).then((res) => {
                 console.log(res.data)
-                setUserId(res.data)
+                setUserId(res.data[0].UserId)
+                setUsername(username)
             });
         });
     };
@@ -31,7 +31,7 @@ function Landing({userId, setUserId, api}) {
             Password: pass,
         }).then((res) => {
             console.log(res.data)
-            setUserId(res.data)
+            setUserId(res.data[0].UserId)
         });
     };
 
@@ -46,7 +46,7 @@ function Landing({userId, setUserId, api}) {
                     onChange={(e) => setUsername(e.target.value)}
                     />
                 <input
-                    type='text'
+                    type='password'
                     placeholder='Password'
                     name='pwd'
                     value={pass}
@@ -63,7 +63,7 @@ function Landing({userId, setUserId, api}) {
                     onChange={(e) => setUsername(e.target.value)}
                     />
                 <input
-                    type='text'
+                    type='password'
                     placeholder='Password'
                     name='pwd'
                     value={pass}

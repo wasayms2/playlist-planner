@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
 
-function SongBrowse({ title, id, playlists, remove, playlistId, api }) {
-    const [addPlaylistId, setAddPlaylistId] = useState(playlists[0].PlaylistID);
+function SongBrowse({ title, artist, id, playlists, remove, playlistId, api }) {
+    let defaultVal = playlistId;
+    if (!defaultVal) {
+        defaultVal = playlists[0].PlaylistID
+    }
+
+    let deleted = 0;
+
+    const [addPlaylistId, setAddPlaylistId] = useState(defaultVal);
     let onAdd = (e) => {
         console.log(`${id}, ${addPlaylistId}`);
         api.post(`/addtoplaylist`, {
@@ -12,7 +19,13 @@ function SongBrowse({ title, id, playlists, remove, playlistId, api }) {
         });
     };
     let onDelete = (e) => {
-        console.log(`${id}, ${playlistId}`);
+        console.log(`${id}, ${playlistId} del`);
+        api.post(`/delfromplaylist`, {
+            PlaylistID: playlistId,
+            SongID: id,
+        }).then((res) => {
+            console.log(res.data);
+        });
     };
 
     let action = 
@@ -36,17 +49,22 @@ function SongBrowse({ title, id, playlists, remove, playlistId, api }) {
             </div>;
     }
 
-    return (
-        <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            padding: '.5em 2em',
-            border: '5px solid #151515'
-            }}>
-            <div>{title}</div>
-            {action}
-        </div>
-    );
+    let card = <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        padding: '.5em 2em',
+        border: '5px solid #151515'
+        }}>
+        <div>{title} (by {artist})</div>
+        {action}
+        {deleted}
+    </div>;
+
+    if (deleted === 1) {
+        card = undefined;
+    }
+
+    return (<>{card}</>);
 }
 
 export default SongBrowse;

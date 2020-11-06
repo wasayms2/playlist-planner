@@ -18,6 +18,9 @@ function Navigation() {
             <nav>
                 <ul>
                     <li>
+                        <Link to="/leaderboard">Leaderboard</Link>
+                    </li>
+                    <li>
                         <Link to="/playlists">My Playlists</Link>
                     </li>
                     <li>

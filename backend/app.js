@@ -131,7 +131,7 @@ app.post('/addtoplaylist', (req, res) => {
 //delete from playlist
 app.post('/delfromplaylist', (req, res) => {
     let id = req.body;
-    var sql = 'DELETE FROM SongsInPlaylist WHERE SongID = ' + sqlDb.escape(id.SongID);
+    var sql = 'DELETE FROM SongsInPlaylist WHERE SongID = ' + sqlDb.escape(id.SongID) + ' AND PlaylistID = ' + sqlDb.escape(id.PlaylistID);
     sqlDb.query(sql, id, (err, result) => {
         if (err) {
             throw err;
@@ -205,7 +205,7 @@ app.post('/userleaderboard', (req, res) => {
 });
 //find list of users and number of playlists each has
 app.get('/viewusers', (req, res) => {
-    let sql = 'SELECT Username, COUNT(PlaylistID) FROM Users NATURAL JOIN Playlists GROUP BY UserId';
+    let sql = 'SELECT Username, COUNT(PlaylistID) FROM Users NATURAL JOIN Playlists GROUP BY UserId ORDER BY COUNT(PlaylistID) DESC';
     sqlDb.query(sql, (err, result) => {
         if (err) {
             throw err;

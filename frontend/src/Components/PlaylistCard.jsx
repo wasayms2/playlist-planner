@@ -1,8 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import SongBrowse from './SongBrowse';
 
-function PlaylistCard({ id, title, songs, api, update }) {
+function PlaylistCard({ id, title, api, update }) {
     const [name, setName] = useState('');
+    const [songs, setSongs] = useState([]);
+
+    useEffect(() => {
+        api.post(`/findsongsinplaylist`, {
+            PlaylistID: id
+        }).then((res) => {
+            setSongs(res.data)
+            console.log(res.data)
+        });
+    }, [])
 
     let changeName = () => {
         api.post(`/changeTitle`, {
@@ -36,7 +46,7 @@ function PlaylistCard({ id, title, songs, api, update }) {
                     Delete Playlist
                 </button>
             </h2>
-            {songs.map((song) => (<SongBrowse title={song.title} id={song.id} remove={true} playlistId={id}/>))}
+            {songs.map((song) => (song && <SongBrowse api={api} title={song.title} artist={song.artist} id={song.SongId} remove={true} playlistId={id}/>))}
             {songs.length === 0 && <p>This playlist is empty...</p>}
         </div>
     );

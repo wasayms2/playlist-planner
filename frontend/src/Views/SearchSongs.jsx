@@ -2,13 +2,21 @@ import React, { useEffect, useState } from 'react';
 import Navigation from '../Components/Navigation';
 import SongBrowse from '../Components/SongBrowse';
 
-function SearchSongs({ api, playlists, updatePlaylists }) {
+function SearchSongs({ api, playlists, setPlaylists, userId }) {
     const [songs, setSongs] = useState([]);
     const [search, setSearch] = useState('');
 
+    let updatePlaylists = () =>{
+        api.post(`/findplaylist`, {
+            UserID: userId
+        }).then((res) => {
+            setPlaylists(res.data)
+        });
+    };
+
     useEffect(() => {
         api.post(`/findsongs`, {
-            Title: `${search}`
+            Search: search
         }).then((res) => {
             setSongs(res.data)
         });
@@ -28,8 +36,8 @@ function SearchSongs({ api, playlists, updatePlaylists }) {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 />
-            {songs && playlists.length > 0 ? songs.map((song) => (<SongBrowse api={api} title={song.title} id={song.SongID} key={song.SongID} playlists={playlists}/>))
-            : songs.map((song) => (<SongBrowse api={api} title={song.title} id={song.SongID} key={song.SongID} playlists={[{PlaylistID: 0}]}/>))}
+            {songs && playlists.length > 0 ? songs.map((song) => (<SongBrowse api={api} title={song.title} artist={song.artist} id={song.SongID} key={song.SongID} playlists={playlists}/>))
+            : songs.map((song) => (<SongBrowse api={api} title={song.title} artist={song.artist} id={song.SongID} key={song.SongID} playlists={[{PlaylistID: 0}]}/>))}
         </div>
         </>
     );

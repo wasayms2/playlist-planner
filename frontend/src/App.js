@@ -15,6 +15,7 @@ import './App.css';
 
 function App() {
   const [userId, setUserId] = useState(undefined);
+  const [username, setUsername] = useState('');
   const [playlists, setPlaylists] = useState([]);
 
   const api = Axios.create({
@@ -27,30 +28,21 @@ function App() {
     credentials: 'same-origin'
   });
 
-  let updatePlaylists = () =>{
-    api.post(`/findplaylist`, {
-        UserID: userId
-    }).then((res) => {
-        setPlaylists(res.data)
-        console.log(res.data)
-    });
-  };
-
   return (
     <div className="App">
       <Router>
         <Switch>
           <Route exact path="/">
-            <Landing userId={userId} setUserId={setUserId} api={api}/>
+            <Landing userId={userId} setUserId={setUserId} api={api} username={username} setUsername={setUsername}/>
           </Route>
           <Route path="/playlists">
-            <UserPlaylists userId={userId} playlists={playlists} setPlaylists={setPlaylists} api={api} updatePlaylists={updatePlaylists}/>
+            <UserPlaylists userId={userId} playlists={playlists} setPlaylists={setPlaylists} api={api}/>
           </Route>
           <Route path="/playlist-search">
-            <SearchPlaylists userId={userId} setUserId={setUserId} api={api} updatePlaylists={updatePlaylists}/>
+            <SearchPlaylists userId={userId} setUserId={setUserId} api={api}/>
           </Route>
           <Route path="/song-search">
-            <SearchSongs userId={userId} setUserId={setUserId} api={api} playlists={playlists} updatePlaylists={updatePlaylists}/>
+            <SearchSongs userId={userId} setUserId={setUserId} api={api} playlists={playlists} setPlaylists={setPlaylists}/>
           </Route>
           <Route path="/new-song">
             <CreateSongs userId={userId} setUserId={setUserId} api={api}/>

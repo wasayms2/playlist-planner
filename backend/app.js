@@ -47,9 +47,10 @@ app.get('/users', (req, res) => {
 //fix
 app.post('/findusers', (req, res) => {
     let id = req.body;
-    let user = id.UserId;
+    let user = id.Username;
+    let pass = id.Password;
     console.log(user);
-    var sql = "SELECT Username, Password FROM Users WHERE UserId = " + sqlDb.escape(user);
+    var sql = "SELECT UserId, Username FROM Users WHERE Username = " + sqlDb.escape(user) + "and Password = " + sqlDb.escape(pass);
     sqlDb.query(sql, id, (err, result) => {
         if (err) {
             throw err;
@@ -61,6 +62,19 @@ app.post('/findusers', (req, res) => {
 });
 //Finding songs
 app.post('/findsongs', (req, res) => {
+    let id = req.body;
+    let pid = id.PlaylistID;
+    var sql = 'SELECT SongId, title, artist FROM Songs s Join SongsInPlaylist sp on s.SongId = sp.SongId WHERE sp.PlaylistID = ' + sqlDb.escape(pid);
+    sqlDb.query(sql, id, (err, result) => {
+        if (err) {
+            throw err;
+        } else{
+            console.log("songs found");
+            res.send(result)
+        }
+    });
+});
+app.post('/addsongs', (req, res) => {
     let id = req.body;
     let t = id.Title;
     var sql = 'SELECT title, SongID FROM Songs WHERE title LIKE ' + sqlDb.escape(t);
@@ -99,6 +113,20 @@ app.post('/addtoplaylist', (req, res) => {
         }
     });
 });
+//delete from playlist
+app.post('/delfromplaylist', (req, res) => {
+    let id = req.body;
+    var sql = 'DELETE FROM SongsInPlaylist WHERE SongID = ' + sqlDb.escape(id.SongID);
+    sqlDb.query(sql, id, (err, result) => {
+        if (err) {
+            throw err;
+        } else{
+            console.log("Playlist data deleted");
+            res.send(result)
+        }
+    });
+});
+
 //Delete Playlist
 app.post('/delplaylist', (req, res) => {
     let id = req.body;

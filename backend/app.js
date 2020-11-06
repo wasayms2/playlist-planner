@@ -63,7 +63,8 @@ app.post('/findusers', (req, res) => {
 app.post('/findsongs', (req, res) => {
     let id = req.body;
     let t = id.Title;
-    var sql = 'SELECT title, SongID FROM Songs WHERE title = %' + sqlDb.escape(t);
+    let a = id.Artist;
+    var sql = 'SELECT title, artist, SongID FROM Songs WHERE title = %' + sqlDb.escape(t) + '% or artist = ' + sqlDb.escape(a); 
     sqlDb.query(sql, id, (err, result) => {
         if (err) {
             throw err;
@@ -77,7 +78,7 @@ app.post('/findsongs', (req, res) => {
 app.post('/findsongsinplaylist', (req, res) => {
     let id = req.body;
     let pid = id.PlaylistID;
-    var sql = 'SELECT SongId, title, artist FROM Songs s Join SongsInPlaylist sp on s.SongId = sp.SongId WHERE sp.PlaylistID = ' + sqlDb.escape(pid);
+    var sql = 'SELECT SongId, title, artist FROM Songs s NATURAL JOIN SongsInPlaylist sp WHERE sp.PlaylistID = ' + sqlDb.escape(pid);
     sqlDb.query(sql, id, (err, result) => {
         if (err) {
             throw err;

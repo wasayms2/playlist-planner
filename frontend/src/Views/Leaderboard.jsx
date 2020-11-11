@@ -26,7 +26,7 @@ function Leaderboard({ api }) {
                     <span style={{fontSize: '1.5em'}}>#{idx + 1}: <span style={{color: '#cfc'}}>{user.Username}</span> </span> with {user['COUNT(PlaylistID)']} playlists
                 </h3>
                 </div>))}
-                <h1 style={{color: '#0f0'}}>Most Popular Songs:</h1>
+                <h1 style={{color: '#0f0'}}>Most Popular Songs: </h1>
                 {songs.slice(0,10).map((song, idx) => (<div>
                 <h3>
                     <span style={{fontSize: '1.5em'}}>#{idx + 1}: <span style={{color: '#cfc'}}>{song.Title}</span> </span> in {song['COUNT(PlaylistID)']} playlists

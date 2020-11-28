@@ -1,3 +1,4 @@
+//import SimpleLinearRegression from 'ml-regression-simple-linear';  
 const express = require('express');
 const mysql = require('mysql');
 const path = require('path');
@@ -62,6 +63,25 @@ const storage = new GridFsStorage({
     }
 });
 const upload = multer({ storage });
+//linear regression 
+app.post('/linreg', (req, res) => {
+    //all songs in playlist
+    
+    var x = 'Select AVG(bpm) FROM SongsInPlaylist sip JOIN Songs s on s.SongID = sip.SongID';
+    var y = 'Select AVG(nrgy) FROM SongsinPlaylist sip JOIN Songs s on s.SongID = sip.SongID';
+    const regression = new SimpleLinearRegression(x, y);
+    let score = regression.predict(x);  
+    console.log(score);
+    var sql = 'Select * FROM Songs WHERE bpm > ' + sql.escape(score-2) + 'AND bpm < ' + sql.escape(score+2)
+    sqlDb.query(sql, id, (err, result) => {
+        if (err) {
+            throw err;
+        } else{
+            console.log("regression data found");
+            res.send(result)
+        }
+    });
+});
 
 app.post('/upload', upload.single('file'), (req, res) => {
     res.json({ file: req.file });

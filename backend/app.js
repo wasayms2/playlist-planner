@@ -67,30 +67,56 @@ const upload = multer({ storage });
 app.post('/linreg', (req, res) => {
     //all songs in playlist
     let id = req.body;
-    var x = 'Select bpm FROM SongsInPlaylist sip JOIN Songs s on s.SongID = sip.SongID';
-    var y = 'Select nrgy FROM SongsinPlaylist sip JOIN Songs s on s.SongID = sip.SongID';
+    var x = 'Select bpm FROM SongsInPlaylist sip JOIN Songs s on s.SongID = sip.SongID WHERE bpm IS NOT NULL';
+    var y = 'Select nrgy FROM SongsInPlaylist sip JOIN Songs s on s.SongID = sip.SongID WHERE nrgy IS NOT NULL';
     sqlDb.query(x, id, (err, result) => {
         if (err) {
             throw err;
         } else {
-            console.log("regression data found");
-            res.send(result);
+            console.log("bpm data found");
             sqlDb.query(y, id, (err, result2) => {
                 if (err) {
                     throw err;
                 } else{
-                    console.log("regression data found");
-                    res.send(result2);
-                    const regression = new linreg(x, y);
-                    let score = regression.predict(x);  
-                    console.log(score);
-                    var sql = 'Select title FROM Songs WHERE bpm > ' + sql.escape(score-2) + 'AND bpm < ' + sql.escape(score+2);
+                    console.log("nrgy data found");
+
+                    //create array for values
+                    const values1 = [];
+                    const values2 = [];
+
+                    var length = Math.min(Object.keys(result).length, Object.keys(result2).length);
+
+                    // result.forEach((item)=> {
+                    //    values1.push(item['bpm']);
+                    // });
+                    for(var i = 0; i < result.length; i++){
+                        if(i + 1 > length){
+                            break;
+                        }
+                        values1.push(result[i]['bpm']);
+                    }
+                    for(var i = 0; i < result2.length; i++){
+                        if(i + 1 > length){
+                            break;
+                        }
+                        values2.push(result2[i]['bpm']);
+                    }
+                    // result2.forEach((item)=> {
+                    //     values2.push(item['bpm']);
+                    //  });
+
+                    console.log(values1);
+                    const regression = new linreg(values1, values2);
+                    console.log("hi");
+                    let score = regression.predict(result); 
+                    var sql = 'Select title FROM Songs WHERE bpm > ' + sqlDb.escape(score-2) + 'AND bpm < ' + sqlDb.escape(score+2);
                     sqlDb.query(sql, id, (err, result3) => {
                         if (err) {
                             throw err;
                         } else {
-                            console.log('Users validated');
-                            res.send(result3);                        }
+                            console.log('predicted values');
+                            res.send(result3);
+                        }
                     });
                 }
             });

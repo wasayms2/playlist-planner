@@ -1,4 +1,4 @@
-//import SimpleLinearRegression from 'ml-regression-simple-linear';  
+const linreg = require('ml-regression-simple-linear');  
 const express = require('express');
 const mysql = require('mysql');
 const path = require('path');
@@ -67,13 +67,9 @@ const upload = multer({ storage });
 app.post('/linreg', (req, res) => {
     //all songs in playlist
     
-    var x = 'Select AVG(bpm) FROM SongsInPlaylist sip JOIN Songs s on s.SongID = sip.SongID';
-    var y = 'Select AVG(nrgy) FROM SongsinPlaylist sip JOIN Songs s on s.SongID = sip.SongID';
-    const regression = new SimpleLinearRegression(x, y);
-    let score = regression.predict(x);  
-    console.log(score);
-    var sql = 'Select * FROM Songs WHERE bpm > ' + sql.escape(score-2) + 'AND bpm < ' + sql.escape(score+2)
-    sqlDb.query(sql, id, (err, result) => {
+    var x1 = 'Select bpm FROM SongsInPlaylist sip JOIN Songs s on s.SongID = sip.SongID';
+    var y1 = 'Select nrgy FROM SongsinPlaylist sip JOIN Songs s on s.SongID = sip.SongID';
+    var x = sqlDb.query(x1, (err, result) => {
         if (err) {
             throw err;
         } else{
@@ -81,6 +77,27 @@ app.post('/linreg', (req, res) => {
             res.send(result)
         }
     });
+    var x = sqlDb.query(y1, (err, result) => {
+        if (err) {
+            throw err;
+        } else{
+            console.log("regression data found");
+            res.send(result)
+        }
+    });
+    var y = sqlDb.query(sql, (err, result) => {
+        if (err) {
+            throw err;
+        } else{
+            console.log("regression data found");
+            res.send(result)
+        }
+    }); 
+    const regression = new linreg(x, y);
+    let score = regression.predict(x);  
+    console.log(score);
+    var sql = 'Select * FROM Songs WHERE bpm > ' + sql.escape(score-2) + 'AND bpm < ' + sql.escape(score+2);
+    
 });
 
 app.post('/upload', upload.single('file'), (req, res) => {
@@ -101,7 +118,7 @@ app.get('/files', (req, res) => {
 app.get('/files/:filename', (req, res) => {
     gfs.files.findOne({ filename: req.params.filename }, (err, file) => {
       if (!file || file.length === 0) {
-        return res.status(404).json({
+        return res.status(404).json({   
           err: 'No file exists'
         });
       }

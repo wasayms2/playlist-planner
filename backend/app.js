@@ -1,4 +1,4 @@
-//import SimpleLinearRegression from 'ml-regression-simple-linear';  
+const linreg = require('ml-regression-simple-linear');  
 const express = require('express');
 const mysql = require('mysql');
 const path = require('path');
@@ -66,20 +66,35 @@ const upload = multer({ storage });
 //linear regression 
 app.post('/linreg', (req, res) => {
     //all songs in playlist
-    
-    var x = 'Select AVG(bpm) FROM SongsInPlaylist sip JOIN Songs s on s.SongID = sip.SongID';
-    var y = 'Select AVG(nrgy) FROM SongsinPlaylist sip JOIN Songs s on s.SongID = sip.SongID';
-    const regression = new SimpleLinearRegression(x, y);
-    let score = regression.predict(x);  
-    console.log(score);
-    var sql = 'Select * FROM Songs WHERE bpm > ' + sql.escape(score-2) + 'AND bpm < ' + sql.escape(score+2)
-    sqlDb.query(sql, id, (err, result) => {
+    let id = req.body;
+    var x = 'Select bpm FROM SongsInPlaylist sip JOIN Songs s on s.SongID = sip.SongID';
+    var y = 'Select nrgy FROM SongsinPlaylist sip JOIN Songs s on s.SongID = sip.SongID';
+    sqlDb.query(x, id, (err, result) => {
         if (err) {
             throw err;
-        } else{
+        } else {
             console.log("regression data found");
-            res.send(result)
-        }
+            res.send(result);
+            sqlDb.query(y, id, (err, result2) => {
+                if (err) {
+                    throw err;
+                } else{
+                    console.log("regression data found");
+                    res.send(result2);
+                    const regression = new linreg(x, y);
+                    let score = regression.predict(x);  
+                    console.log(score);
+                    var sql = 'Select title FROM Songs WHERE bpm > ' + sql.escape(score-2) + 'AND bpm < ' + sql.escape(score+2);
+                    sqlDb.query(sql, id, (err, result3) => {
+                        if (err) {
+                            throw err;
+                        } else {
+                            console.log('Users validated');
+                            res.send(result3);                        }
+                    });
+                }
+            });
+        } 
     });
 });
 
@@ -112,7 +127,7 @@ app.get('/files', (req, res) => {
 app.get('/files/:filename', (req, res) => {
     gfs.files.findOne({ filename: req.params.filename }, (err, file) => {
       if (!file || file.length === 0) {
-        return res.status(404).json({
+        return res.status(404).json({   
           err: 'No file exists'
         });
       }

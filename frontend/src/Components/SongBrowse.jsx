@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
+import Sound from 'react-sound';
+import { Howl } from 'howler';
 
-function SongBrowse({ title, artist, id, playlists, remove, playlistId, api }) {
+function SongBrowse({ title, artist, id, playlists, remove, playlistId, file, api }) {
+    const sound = new Howl({src: `http://localhost:8000/files/${file}`, html5: true});
+
     let defaultVal = playlistId;
     if (!defaultVal) {
         defaultVal = playlists[0].PlaylistID
@@ -25,6 +29,14 @@ function SongBrowse({ title, artist, id, playlists, remove, playlistId, api }) {
             console.log(res.data);
         });
     };
+
+    let playSong = () => {
+        if (sound.playing()) {
+            sound.pause();
+        } else {
+            sound.play();
+        }
+    }
 
     let action = 
         <div>
@@ -53,8 +65,8 @@ function SongBrowse({ title, artist, id, playlists, remove, playlistId, api }) {
         padding: '.5em 2em',
         border: '5px solid #151515'
         }}>
-        <div>{title} (by {artist})</div>
-        {action}
+        <div>{title} (by {artist}) {typeof file === 'string' && <button onClick={playSong}> Play/Pause </button>}</div>
+    <div>{action}</div>
     </div>;
 
     return (<>{card}</>);

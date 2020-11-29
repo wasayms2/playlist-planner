@@ -163,7 +163,7 @@ app.post('/findsongs', (req, res) => {
 app.post('/findsongsinplaylist', (req, res) => {
     let id = req.body;
     let pid = id.PlaylistID;
-    var sql = 'SELECT SongId, title, artist FROM Songs s NATURAL JOIN SongsInPlaylist sp WHERE sp.PlaylistID = ' + sqlDb.escape(pid);
+    var sql = 'SELECT SongId, title, artist, Filename FROM Songs s NATURAL JOIN SongsInPlaylist sp WHERE sp.PlaylistID = ' + sqlDb.escape(pid);
     sqlDb.query(sql, id, (err, result) => {
         if (err) {
             throw err;

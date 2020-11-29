@@ -11,16 +11,16 @@ const getAudioContext =  () => {
 function SongBrowse({ title, artist, id, playlists, remove, playlistId, file, api }) {
     const audioContext = getAudioContext();
     const source = audioContext.createBufferSource()
-    useEffect(async () => {
-        if (typeof file === 'string') {
-            const response = await axios.get(`/files/${file}`, {
-                responseType: 'arraybuffer', // <- important param
-            });
-            const audioBuffer = await audioContext.decodeAudioData(response.data);;
-            source.buffer = audioBuffer;
-            source.connect(audioContext.destination);
-        }
-    })
+    // useEffect(async () => {
+    //     if (typeof file === 'string') {
+    //         const response = await axios.get(`/files/${file}`, {
+    //             responseType: 'arraybuffer',
+    //         });
+    //         const audioBuffer = await audioContext.decodeAudioData(response.data);;
+    //         source.buffer = audioBuffer;
+    //         source.connect(audioContext.destination);
+    //     }
+    // })
 
 
     // let sound;
@@ -55,28 +55,29 @@ function SongBrowse({ title, artist, id, playlists, remove, playlistId, file, ap
         });
     };
 
-    const [startedAt, setStart] = useState(undefined);
-    const [pausedAt, setPause] = useState(undefined);
-    let playSong = () => {
-        // if (typeof startedAt === 'undefined') {
-        //     setStart(Date.now());
-        //     source.start();
-        // } else if (typeof pausedAt === 'undefined') {
-        //     source.stop();
-        //     setPause(Date.now() - startedAt);
-        // } else {
-        //     source.start();
-        //     setStart(Date.now() - pausedAt);
-        //     source.resume();
-        //     setPause(undefined);
-        // }
-        if(source.state === 'running') {
-            source.suspend()
-        } else if(source.state === 'suspended') {
-            source.resume()
+    let playing = false;
+    let playSong = async () => {
+        console.log(audioContext)
+        // playing ? source.stop() : source.start();
+        // setPlaying(!playing)
+        if (typeof file === 'string') {
+            const response = await axios.get(`/files/${file}`, {
+                responseType: 'arraybuffer',
+            });
+            const audioBuffer = await audioContext.decodeAudioData(response.data);;
+            source.buffer = audioBuffer;
+            source.connect(audioContext.destination);
+            source.start(0)
+            playing = true
+            console.log('played')
         } else {
-            source.start()
+            console.log('failed')
         }
+    }
+    let pauseSong = () => {
+        console.log(audioContext)
+        source.stop(0)
+        playing = false
     }
 
     let action = 
@@ -129,7 +130,7 @@ function SongBrowse({ title, artist, id, playlists, remove, playlistId, file, ap
         padding: '.5em 2em',
         border: '5px solid #151515'
         }}>
-        <div>{title} (by {artist}) {typeof file === 'string' && <button onClick={playSong}> Play/Pause </button>}</div>
+        <div>{title} (by {artist}) {typeof file === 'string' && <button onClick={() => playing ? pauseSong() : playSong()}> Play/Pause </button>}</div>
     <div>{action}</div>
     </div>;
 

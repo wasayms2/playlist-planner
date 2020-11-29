@@ -12,7 +12,7 @@ function PlaylistCard({ id, title, api, update }) {
             setSongs(res.data)
             console.log(res.data)
         });
-    }, [])
+    }, [api, id])
 
     let changeName = () => {
         api.post(`/changeTitle`, {

@@ -165,7 +165,7 @@ app.post('/findsongs', (req, res) => {
     let id = req.body;
     let t = id.Search;
     let a = id.Search;
-    let sql = 'SELECT title, artist, SongID FROM Songs WHERE title LIKE "%' + sqlDb.escape(t) + '%" or artist LIKE "%' + sqlDb.escape(a) + '%"';
+    let sql = 'SELECT title, artist, SongID, Filename FROM Songs WHERE title LIKE "%' + sqlDb.escape(t) + '%" or artist LIKE "%' + sqlDb.escape(a) + '%"';
     sql = sql.replace(/'/g, "");
     sqlDb.query(sql, id, (err, result) => {
         if (err) {
@@ -180,7 +180,7 @@ app.post('/findsongs', (req, res) => {
 app.post('/findsongsinplaylist', (req, res) => {
     let id = req.body;
     let pid = id.PlaylistID;
-    var sql = 'SELECT SongId, title, artist FROM Songs s NATURAL JOIN SongsInPlaylist sp WHERE sp.PlaylistID = ' + sqlDb.escape(pid);
+    var sql = 'SELECT SongId, title, artist, Filename FROM Songs s NATURAL JOIN SongsInPlaylist sp WHERE sp.PlaylistID = ' + sqlDb.escape(pid);
     sqlDb.query(sql, id, (err, result) => {
         if (err) {
             throw err;

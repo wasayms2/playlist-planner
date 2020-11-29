@@ -80,7 +80,7 @@ app.post('/linreg', (req, res) => {
                 } else{
                     console.log("nrgy data found");
                     result.forEach((item)=> {
-                       //separate key in array of dictionaries 
+                       //separate key in array of dictionaries       
                     });
                     const regression = new linreg(result, result2);
                     console.log("hi");

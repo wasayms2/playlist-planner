@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import Sound from 'react-sound';
 import { Howl } from 'howler';
 
 function SongBrowse({ title, artist, id, playlists, remove, playlistId, file, api }) {
     const sound = new Howl({src: `http://localhost:8000/files/${file}`, html5: true});
+    const [uploaded, setUploaded] = useState('');
 
     let defaultVal = playlistId;
     if (!defaultVal) {
@@ -55,6 +55,24 @@ function SongBrowse({ title, artist, id, playlists, remove, playlistId, file, ap
     if (remove) {
         action =
             <div>
+                <button style={{margin: '5px'}} onClick={() => {
+                    if (uploaded === '') {
+                        alert('No file chosen. Please upload a file to add to the server')
+                    } else {
+                        console.log(uploaded)
+                        let formData = new FormData();
+                        formData.append("file", uploaded);
+                        api.post('/upload', formData, {
+                            headers: {
+                            'Content-Type': 'multipart/form-data'
+                            }
+                        })
+                    }
+                }}>Upload Song</button>
+                <input type='file' onChange={(e) => {
+                    setUploaded(e.target.files[0]);
+                    console.log(e.target.files[0]);
+                }}/>
                 <button onClick={onDelete} style={{margin: '5px'}}> Remove! </button>
             </div>;
     }

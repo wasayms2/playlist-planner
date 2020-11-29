@@ -84,7 +84,18 @@ app.post('/linreg', (req, res) => {
 });
 
 app.post('/upload', upload.single('file'), (req, res) => {
-    res.json({ file: req.file });
+    let id = req.body;
+    let filename = req.file.filename;
+    console.log(`${filename} uploaded!`);
+    let sql = 'UPDATE Songs SET Filename ='+sqlDb.escape(filename)+' WHERE SongID =' + sqlDb.escape(id.SongID);
+    sqlDb.query(sql, id, (err, result) => {
+        if (err) {
+            throw err;
+        } else{
+            console.log(`${filename} added to sql`);
+            res.send(result)
+        }
+    });
 });
 
 app.get('/files', (req, res) => {
@@ -107,7 +118,8 @@ app.get('/files/:filename', (req, res) => {
       }
       //return res.json(file);
       const readstream = gfs.createReadStream(file.filename);
-      readstream.pipe(res)
+      res.type('audio/mpeg');
+      readstream.pipe(res);
     });
   });
 

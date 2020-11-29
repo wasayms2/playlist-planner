@@ -36,7 +36,7 @@ function SearchSongs({ api, playlists, setPlaylists, userId }) {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 />
-            {songs && playlists.length > 0 ? songs.map((song) => (<SongBrowse api={api} title={song.title} artist={song.artist} id={song.SongID} key={song.SongID} playlists={playlists}/>))
+            {songs && playlists.length > 0 ? songs.map((song) => (<SongBrowse file={song.Filename} api={api} title={song.title} artist={song.artist} id={song.SongID} key={song.SongID} playlists={playlists}/>))
             : songs.map((song) => (<SongBrowse api={api} file={song.Filename} title={song.title} artist={song.artist} id={song.SongID} key={song.SongID} playlists={[{PlaylistID: 0}]}/>))}
         </div>
         </>

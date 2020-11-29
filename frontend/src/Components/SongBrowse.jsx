@@ -1,8 +1,32 @@
-import React, { useState } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
+import axios from 'axios';
 import { Howl } from 'howler';
 
+const getAudioContext =  () => {
+    AudioContext = window.AudioContext || window.webkitAudioContext;
+    const audioContent = new AudioContext();
+    return audioContent;
+};
+
 function SongBrowse({ title, artist, id, playlists, remove, playlistId, file, api }) {
-    const sound = new Howl({src: `http://localhost:8000/files/${file}`, html5: true});
+    const audioContext = getAudioContext();
+    const source = audioContext.createBufferSource()
+    useEffect(async () => {
+        if (typeof file === 'string') {
+            const response = await axios.get(`/files/${file}`, {
+                responseType: 'arraybuffer', // <- important param
+            });
+            const audioBuffer = await audioContext.decodeAudioData(response.data);;
+            source.buffer = audioBuffer;
+            source.connect(audioContext.destination);
+        }
+    })
+
+
+    // let sound;
+    // if (typeof file === 'string') {
+    //     sound = new Howl({src: `http://localhost:8000/files/${file}`, html5: true});
+    // }
     const [uploaded, setUploaded] = useState('');
 
     let defaultVal = playlistId;
@@ -10,15 +34,16 @@ function SongBrowse({ title, artist, id, playlists, remove, playlistId, file, ap
         defaultVal = playlists[0].PlaylistID
     }
 
+
     const [addPlaylistId, setAddPlaylistId] = useState(defaultVal);
     let onAdd = (e) => {
         console.log(`${id}, ${addPlaylistId}`);
-        api.post(`/addtoplaylist`, {
+        console.log(api.post(`/addtoplaylist`, {
             PlaylistID: addPlaylistId,
             SongID: id,
         }).then((res) => {
             console.log(res.data);
-        });
+        }))
     };
     let onDelete = (e) => {
         console.log(`${id}, ${playlistId} del`);
@@ -30,11 +55,27 @@ function SongBrowse({ title, artist, id, playlists, remove, playlistId, file, ap
         });
     };
 
+    const [startedAt, setStart] = useState(undefined);
+    const [pausedAt, setPause] = useState(undefined);
     let playSong = () => {
-        if (sound.playing()) {
-            sound.pause();
+        // if (typeof startedAt === 'undefined') {
+        //     setStart(Date.now());
+        //     source.start();
+        // } else if (typeof pausedAt === 'undefined') {
+        //     source.stop();
+        //     setPause(Date.now() - startedAt);
+        // } else {
+        //     source.start();
+        //     setStart(Date.now() - pausedAt);
+        //     source.resume();
+        //     setPause(undefined);
+        // }
+        if(source.state === 'running') {
+            source.suspend()
+        } else if(source.state === 'suspended') {
+            source.resume()
         } else {
-            sound.play();
+            source.start()
         }
     }
 
@@ -62,10 +103,15 @@ function SongBrowse({ title, artist, id, playlists, remove, playlistId, file, ap
                         console.log(uploaded)
                         let formData = new FormData();
                         formData.append("file", uploaded);
-                        api.post('/upload', formData, {
+                        formData.append("SongID", id);
+                        axios.post('/upload', formData, {
+                            timeout: 5000,
+                            mode: 'no-cors',
                             headers: {
-                            'Content-Type': 'multipart/form-data'
-                            }
+                                'Access-Control-Allow-Origin': '*',
+                                'Content-Type': 'multipart/form-data'
+                            },
+                            credentials: 'same-origin'
                         })
                     }
                 }}>Upload Song</button>

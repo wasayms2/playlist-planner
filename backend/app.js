@@ -79,7 +79,7 @@ app.post('/linreg', (req, res) => {
                     throw err;
                 } else{
                     console.log("nrgy data found");
-
+                    console.log(result2);
                     //create array for values
                     const values1 = [];
                     const values2 = [];
@@ -99,7 +99,7 @@ app.post('/linreg', (req, res) => {
                         if(i + 1 > length){
                             break;
                         }
-                        values2.push(result2[i]['bpm']);
+                        values2.push(result2[i]['nrgy']);
                     }
                     // result2.forEach((item)=> {
                     //     values2.push(item['bpm']);
@@ -107,9 +107,11 @@ app.post('/linreg', (req, res) => {
 
                     console.log(values1);
                     const regression = new linreg(values1, values2);
+                    console.log(values2);
                     console.log("hi");
-                    let score = regression.predict(result); 
-                    var sql = 'Select title FROM Songs WHERE bpm > ' + sqlDb.escape(score-2) + 'AND bpm < ' + sqlDb.escape(score+2);
+                    let score = parseInt(regression.predict(80), 10); 
+                    console.log(score);
+                    var sql = 'Select title, artist FROM Songs WHERE bpm > ' + sqlDb.escape(score-2) + ' AND bpm < ' + sqlDb.escape(score+2);
                     sqlDb.query(sql, id, (err, result3) => {
                         if (err) {
                             throw err;

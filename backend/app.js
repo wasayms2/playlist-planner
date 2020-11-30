@@ -124,6 +124,19 @@ app.post('/linreg', (req, res) => {
     });
 });
 
+app.post('/addnewsong', (req, res) => {
+    let id = req.body;
+    var sql = 'INSERT INTO Songs SET ?';
+    sqlDb.query(sql, id, (err, result) => {
+        if (err) {
+            throw err;
+        } else{
+            console.log("New song inserted");
+            res.send(result)
+        }
+    });
+})
+
 app.post('/upload', upload.single('file'), (req, res) => {
     let id = req.body;
     let filename = req.file.filename;
@@ -174,7 +187,6 @@ app.post('/users', (req, res) => {
             throw err;
         } else{
             console.log("User data inserted");
-            console.log(sqlDb);
             res.send(result)
         }
     });

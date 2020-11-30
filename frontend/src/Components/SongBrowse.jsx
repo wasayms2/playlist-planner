@@ -1,6 +1,5 @@
-import React, { createContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Howl } from 'howler';
 
 const getAudioContext =  () => {
     AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -21,22 +20,6 @@ function SongBrowse({ title, artist, id, playlists, remove, playlistId, file, ap
         }
     },[file, newFile])
     
-    // useEffect(async () => {
-    //     if (typeof file === 'string') {
-    //         const response = await axios.get(`/files/${file}`, {
-    //             responseType: 'arraybuffer',
-    //         });
-    //         const audioBuffer = await audioContext.decodeAudioData(response.data);;
-    //         source.buffer = audioBuffer;
-    //         source.connect(audioContext.destination);
-    //     }
-    // })
-
-
-    // let sound;
-    // if (typeof file === 'string') {
-    //     sound = new Howl({src: `http://localhost:8000/files/${file}`, html5: true});
-    // }
     const [uploaded, setUploaded] = useState('');
 
     let defaultVal = playlistId;
@@ -117,6 +100,7 @@ function SongBrowse({ title, artist, id, playlists, remove, playlistId, file, ap
     if (remove) {
         action =
             <div>
+                {typeof file !== 'string' &&
                 <button style={{margin: '5px'}} onClick={() => {
                     if (uploaded === '') {
                         alert('No file chosen. Please upload a file to add to the server')
@@ -137,11 +121,11 @@ function SongBrowse({ title, artist, id, playlists, remove, playlistId, file, ap
                             setNewFile(res.data.filename)
                         })
                     }
-                }}>Upload Song</button>
+                }}>Upload Song</button> &&
                 <input type='file' onChange={(e) => {
                     setUploaded(e.target.files[0]);
                     console.log(e.target.files[0]);
-                }}/>
+                }}/>}
                 <button onClick={onDelete} style={{margin: '5px'}}> Remove! </button>
             </div>;
     }

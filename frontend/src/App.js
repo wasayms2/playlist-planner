@@ -39,7 +39,7 @@ function App() {
             <UserPlaylists userId={userId} playlists={playlists} setPlaylists={setPlaylists} api={api}/>
           </Route>
           <Route path="/playlist-search">
-            <SearchPlaylists userId={userId} setUserId={setUserId} api={api}/>
+            <SearchPlaylists userId={userId} setUserId={setUserId} playlists={playlists} setPlaylists={setPlaylists} api={api}/>
           </Route>
           <Route path="/song-search">
             <SearchSongs userId={userId} setUserId={setUserId} api={api} playlists={playlists} setPlaylists={setPlaylists}/>

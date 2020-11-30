@@ -126,6 +126,32 @@ app.post('/linreg', (req, res) => {
     });
 });
 
+app.get('/playlist/:playlistID', (req, res) => {
+    let id = req.params;
+    var sql = 'SELECT * FROM Playlists NATURAL JOIN SongsInPlaylist NATURAL JOIN Songs WHERE PlaylistID =' + sqlDb.escape(id.playlistID);;
+    sqlDb.query(sql, id, (err, result) => {
+        if (err) {
+            throw err;
+        } else{
+            console.log(`playlist ${id.playlistID} found`);
+            res.send(result)
+        }
+    });
+})
+
+app.post('/addnewsong', (req, res) => {
+    let id = req.body;
+    var sql = 'INSERT INTO Songs SET ?';
+    sqlDb.query(sql, id, (err, result) => {
+        if (err) {
+            throw err;
+        } else{
+            console.log("New song inserted");
+            res.send(result)
+        }
+    });
+})
+
 app.post('/upload', upload.single('file'), (req, res) => {
     let id = req.body;
     let filename = req.file.filename;
@@ -176,7 +202,6 @@ app.post('/users', (req, res) => {
             throw err;
         } else{
             console.log("User data inserted");
-            console.log(sqlDb);
             res.send(result)
         }
     });

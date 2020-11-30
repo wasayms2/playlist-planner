@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import SongBrowse from './SongBrowse';
 
-function PlaylistCard({ id, title, api, update }) {
+function PlaylistCard({ id, title, api, update, viewonly, otherplaylists }) {
     const [name, setName] = useState('');
     const [songs, setSongs] = useState([]);
 
@@ -20,7 +20,9 @@ function PlaylistCard({ id, title, api, update }) {
             PlaylistID: id,
         }).then((res) => {
             console.log(res.data);
-            update();
+            if (!viewonly) {
+                update();
+            }
             setName('');
         });
     };
@@ -30,23 +32,26 @@ function PlaylistCard({ id, title, api, update }) {
             PlaylistID: id,
         }).then((res) => {
             console.log(res.data);
-            update();
+            if (!viewonly) {
+                update();
+            }
         });
     }
 
     return (
         <div>
             <h2>
-                {title}
-                <input style={{margin: '10px'}} type='text' placeholder='New Playlist Name' value={name} onChange={(e) => (setName(e.target.value))}/>
+                {title} ({id})
+                { !viewonly &&
+                <input style={{margin: '10px'}} type='text' placeholder='New Playlist Name' value={name} onChange={(e) => (setName(e.target.value))}/> &&
                 <button style={{margin: '10px'}} onClick={changeName}>
                     Edit Name
-                </button>
+                </button> &&
                 <button style={{margin: '10px'}} onClick={deletePlaylist}>
                     Delete Playlist
-                </button>
+                </button>}
             </h2>
-            {songs.map((song) => (song && <SongBrowse api={api} file={song.Filename} title={song.title} artist={song.artist} id={song.SongId} remove={true} playlistId={id}/>))}
+            {songs.map((song) => (song && <SongBrowse playlists={otherplaylists} api={api} file={song.Filename} title={song.title} artist={song.artist} id={song.SongId} remove={viewonly ? false : true} playlistId={id} />))}
             {songs.length === 0 && <p>This playlist is empty...</p>}
         </div>
     );

@@ -134,7 +134,7 @@ app.post('/upload', upload.single('file'), (req, res) => {
             throw err;
         } else{
             console.log(`${filename} added to sql`);
-            res.send(result)
+            res.send({ 'filename': filename })
         }
     });
 });

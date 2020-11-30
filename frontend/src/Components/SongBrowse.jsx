@@ -9,8 +9,18 @@ const getAudioContext =  () => {
 };
 
 function SongBrowse({ title, artist, id, playlists, remove, playlistId, file, api }) {
-    const audioContext = getAudioContext();
-    const source = audioContext.createBufferSource()
+    const [newFile, setNewFile] = useState(file);
+    const [audioContext, setAudioContext] = useState(undefined); 
+    const [source, setSource] = useState(undefined);
+    useEffect(() => {
+        console.log('yeeee')
+        if (typeof file === 'string' || typeof newFile === 'string') {
+            let temp = getAudioContext()
+            setAudioContext(temp);
+            setSource(temp.createBufferSource());
+        }
+    },[file, newFile])
+    
     // useEffect(async () => {
     //     if (typeof file === 'string') {
     //         const response = await axios.get(`/files/${file}`, {
@@ -70,6 +80,16 @@ function SongBrowse({ title, artist, id, playlists, remove, playlistId, file, ap
             source.start(0)
             playing = true
             console.log('played')
+        } else if (typeof newFile === 'string') {
+            const response = await axios.get(`/files/${newFile}`, {
+                responseType: 'arraybuffer',
+            });
+            const audioBuffer = await audioContext.decodeAudioData(response.data);;
+            source.buffer = audioBuffer;
+            source.connect(audioContext.destination);
+            source.start(0)
+            playing = true
+            console.log('played')
         } else {
             console.log('failed')
         }
@@ -113,6 +133,8 @@ function SongBrowse({ title, artist, id, playlists, remove, playlistId, file, ap
                                 'Content-Type': 'multipart/form-data'
                             },
                             credentials: 'same-origin'
+                        }).then((res) => {
+                            setNewFile(res.data.filename)
                         })
                     }
                 }}>Upload Song</button>

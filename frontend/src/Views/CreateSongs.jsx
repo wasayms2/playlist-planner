@@ -136,7 +136,6 @@ function CreateSongs({userId, setUserId, api}) {
                     'acous': acous,
                     'spch': speech,
                     'pop': pop,
-                    'SongID': '604',
                 };
                 for (let feat in songInfo) {
                     if (typeof songInfo[feat] !== 'string' || songInfo[feat].length <= 0) {
@@ -145,6 +144,20 @@ function CreateSongs({userId, setUserId, api}) {
                 }
                 api.post(`/addnewsong`, songInfo).then((res) => {
                     console.log(res.data);
+                    setTitle('');
+                    setArtist('');
+                    setGenre('');
+                    setYear('');
+                    setBpm('');
+                    setNrgy('');
+                    setDnce('');
+                    setDb('');
+                    setLive('');
+                    setVal('');
+                    setDur('');
+                    setAcous('');
+                    setSpeech('');
+                    setPop('');
                 });
             }}>Create New Song</button>
         </div>

@@ -124,6 +124,19 @@ app.post('/linreg', (req, res) => {
     });
 });
 
+app.get('/playlist/:playlistID', (req, res) => {
+    let id = req.params;
+    var sql = 'SELECT * FROM Playlists NATURAL JOIN SongsInPlaylist NATURAL JOIN Songs WHERE PlaylistID =' + sqlDb.escape(id.playlistID);;
+    sqlDb.query(sql, id, (err, result) => {
+        if (err) {
+            throw err;
+        } else{
+            console.log(`playlist ${id.playlistID} found`);
+            res.send(result)
+        }
+    });
+})
+
 app.post('/addnewsong', (req, res) => {
     let id = req.body;
     var sql = 'INSERT INTO Songs SET ?';

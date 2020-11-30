@@ -24,7 +24,7 @@ function Navigation() {
                         <Link to="/playlists">My Playlists</Link>
                     </li>
                     <li>
-                        <Link to="/playlist-search">Search Playlists</Link>
+                        <Link to="/playlist-search">Find A Playlist</Link>
                     </li>
                     <li>
                         <Link to="/song-search">Search Songs</Link>

@@ -79,10 +79,34 @@ app.post('/linreg', (req, res) => {
                     throw err;
                 } else{
                     console.log("nrgy data found");
-                    result.forEach((item)=> {
-                       //separate key in array of dictionaries       
-                    });
-                    const regression = new linreg(result, result2);
+
+                    //create array for values
+                    const values1 = [];
+                    const values2 = [];
+
+                    var length = Math.min(Object.keys(result).length, Object.keys(result2).length);
+
+                    // result.forEach((item)=> {
+                    //    values1.push(item['bpm']);
+                    // });
+                    for(var i = 0; i < result.length; i++){
+                        if(i + 1 > length){
+                            break;
+                        }
+                        values1.push(result[i]['bpm']);
+                    }
+                    for(var i = 0; i < result2.length; i++){
+                        if(i + 1 > length){
+                            break;
+                        }
+                        values2.push(result2[i]['bpm']);
+                    }
+                    // result2.forEach((item)=> {
+                    //     values2.push(item['bpm']);
+                    //  });
+
+                    console.log(values1);
+                    const regression = new linreg(values1, values2);
                     console.log("hi");
                     let score = regression.predict(result); 
                     var sql = 'Select title FROM Songs WHERE bpm > ' + sqlDb.escape(score-2) + 'AND bpm < ' + sqlDb.escape(score+2);
@@ -101,7 +125,18 @@ app.post('/linreg', (req, res) => {
 });
 
 app.post('/upload', upload.single('file'), (req, res) => {
-    res.json({ file: req.file });
+    let id = req.body;
+    let filename = req.file.filename;
+    console.log(`${filename} uploaded!`);
+    let sql = 'UPDATE Songs SET Filename ='+sqlDb.escape(filename)+' WHERE SongID =' + sqlDb.escape(id.SongID);
+    sqlDb.query(sql, id, (err, result) => {
+        if (err) {
+            throw err;
+        } else{
+            console.log(`${filename} added to sql`);
+            res.send({ 'filename': filename })
+        }
+    });
 });
 
 app.get('/files', (req, res) => {
@@ -124,7 +159,8 @@ app.get('/files/:filename', (req, res) => {
       }
       //return res.json(file);
       const readstream = gfs.createReadStream(file.filename);
-      readstream.pipe(res)
+      res.type('audio/mpeg');
+      readstream.pipe(res);
     });
   });
 

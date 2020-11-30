@@ -12,7 +12,7 @@ function PlaylistCard({ id, title, api, update }) {
             setSongs(res.data)
             console.log(res.data)
         });
-    }, [])
+    }, [api, id])
 
     let changeName = () => {
         api.post(`/changeTitle`, {
@@ -46,7 +46,7 @@ function PlaylistCard({ id, title, api, update }) {
                     Delete Playlist
                 </button>
             </h2>
-            {songs.map((song) => (song && <SongBrowse api={api} title={song.title} artist={song.artist} id={song.SongId} remove={true} playlistId={id}/>))}
+            {songs.map((song) => (song && <SongBrowse api={api} file={song.Filename} title={song.title} artist={song.artist} id={song.SongId} remove={true} playlistId={id}/>))}
             {songs.length === 0 && <p>This playlist is empty...</p>}
         </div>
     );

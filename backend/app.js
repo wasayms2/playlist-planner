@@ -17,6 +17,7 @@ const sqlDb = mysql.createConnection({
     user     : '50LjX7Azzy',
     password : 'Ui6sRVVDE2',
     port     : 3306,
+    multipleStatements: true,
 });
 
 // Connecting to server
@@ -67,73 +68,62 @@ const upload = multer({ storage });
 app.post('/linreg', (req, res) => {
     //all songs in playlist
     let id = req.body;
-    var x = 'Select bpm FROM SongsInPlaylist sip JOIN Songs s on s.SongID = sip.SongID WHERE bpm IS NOT NULL AND PlaylistID = ' + sqlDb.escape(id.playlistID);
-    var y = 'Select nrgy FROM SongsInPlaylist sip JOIN Songs s on s.SongID = sip.SongID WHERE nrgy IS NOT NULL AND PlaylistID = ' + sqlDb.escape(id.playlistID);
+    let x = 'Select bpm, nrgy FROM SongsInPlaylist sip NATURAL JOIN Songs WHERE bpm IS NOT NULL AND nrgy IS NOT NULL AND PlaylistID = ' + sqlDb.escape(id.playlistID);
     sqlDb.query(x, id, (err, result) => {
         if (err) {
             throw err;
-        } else {
-            console.log("bpm data found");
-            sqlDb.query(y, id, (err, result2) => {
+        } else{
+            console.log("nrgy data found");
+            console.log(result);
+            //create array for values
+            const values1 = [];
+            const values2 = [];
+
+            //var length = Math.min(Object.keys(result).length, Object.keys(result2).length);
+
+            // result.forEach((item)=> {
+            //    values1.push(item['bpm']);
+            // });
+            let sum = 0;
+            for(var i = 0; i < Object.keys(result).length; i++){
+                values1.push(result[i]['bpm']);
+                sum += result[i]['bpm']
+                values2.push(result[i]['nrgy']);
+            }
+            // var sum = 0;
+            // for (var i = 0; i < values1.length; i++) {
+            //     sum += values1[i];
+            // }
+            console.log(sum);
+            let avg_bpm = sum/values1.length;
+            console.log(avg_bpm);
+            // for(var i = 0; i < Object.keys(result).length; i++){
+            //     values2.push(result[i]['nrgy']);
+            // }
+            
+            // result2.forEach((item)=> {
+            //     values2.push(item['bpm']);
+            //  });
+
+            console.log(values1);
+            const regression = new linreg(values1, values2);
+            console.log(values2);
+            console.log("hi");
+            console.log(avg_bpm);
+            
+            let energy = parseInt(regression.predict(parseInt(avg_bpm, 10), 10)); 
+            console.log(energy);
+            let score = Math.sqrt(Math.pow(energy,2)+Math.pow(avg_bpm,2))
+            let sql = 'SET @score = '+sqlDb.escape(score)+'; Select title, artist, SongID, bpm, nrgy FROM Songs WHERE bpm IS NOT NULL AND nrgy IS NOT NULL ORDER BY ABS(@score - SQRT(POW(nrgy,2) + POW(bpm,2))) ASC LIMIT 3;';
+            sqlDb.query(sql, id, (err, result3) => {
                 if (err) {
                     throw err;
-                } else{
-                    console.log("nrgy data found");
-                    console.log(result2);
-                    //create array for values
-                    const values1 = [];
-                    const values2 = [];
-
-                    var length = Math.min(Object.keys(result).length, Object.keys(result2).length);
-
-                    // result.forEach((item)=> {
-                    //    values1.push(item['bpm']);
-                    // });
-                    for(var i = 0; i < result.length; i++){
-                        if(i + 1 > length){
-                            break;
-                        }
-                        values1.push(result[i]['bpm']);
-                    }
-                    var sum = 0;
-                    for (var i = 0; i < values1.length; i++) {
-                        sum += values1[i];
-                    }
-                    console.log(sum);
-                    var average = sum/values1.length;
-                    console.log(average);
-                    for(var i = 0; i < result2.length; i++){
-                        if(i + 1 > length){
-                            break;
-                        }
-                        values2.push(result2[i]['nrgy']);
-                    }
-                    
-                    // result2.forEach((item)=> {
-                    //     values2.push(item['bpm']);
-                    //  });
-
-                    console.log(values1);
-                    const regression = new linreg(values1, values2);
-                    console.log(values2);
-                    console.log("hi");
-                    console.log(average);
-                    
-                    let score = parseInt(regression.predict(parseInt(average, 10), 10)); 
-                    console.log(score);
-                    var sql = 'Select title, artist FROM Songs WHERE SongId NOT IN (Select SongId From SongsInPlaylist WHERE PlaylistId = ' + sqlDb.escape(id.playlistID) + 
-                    ') AND bpm > ' + sqlDb.escape(score-2) + ' AND bpm < ' + sqlDb.escape(score+2);
-                    sqlDb.query(sql, id, (err, result3) => {
-                        if (err) {
-                            throw err;
-                        } else {
-                            console.log('predicted values');
-                            res.send(result3);
-                        }
-                    });
+                } else {
+                    console.log('predicted values');
+                    res.send(result3[1]);
                 }
             });
-        } 
+        }
     });
 });
 

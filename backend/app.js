@@ -67,8 +67,8 @@ const upload = multer({ storage });
 app.post('/linreg', (req, res) => {
     //all songs in playlist
     let id = req.body;
-    var x = 'Select bpm FROM SongsInPlaylist sip JOIN Songs s on s.SongID = sip.SongID WHERE bpm IS NOT NULL';
-    var y = 'Select nrgy FROM SongsInPlaylist sip JOIN Songs s on s.SongID = sip.SongID WHERE nrgy IS NOT NULL';
+    var x = 'Select bpm FROM SongsInPlaylist sip JOIN Songs s on s.SongID = sip.SongID WHERE bpm IS NOT NULL AND PlaylistID = ' + sqlDb.escape(id.playlistID);
+    var y = 'Select nrgy FROM SongsInPlaylist sip JOIN Songs s on s.SongID = sip.SongID WHERE nrgy IS NOT NULL AND PlaylistID = ' + sqlDb.escape(id.playlistID);
     sqlDb.query(x, id, (err, result) => {
         if (err) {
             throw err;
@@ -95,12 +95,20 @@ app.post('/linreg', (req, res) => {
                         }
                         values1.push(result[i]['bpm']);
                     }
+                    var sum = 0;
+                    for (var i = 0; i < values1.length; i++) {
+                        sum += values1[i];
+                    }
+                    console.log(sum);
+                    var average = sum/values1.length;
+                    console.log(average);
                     for(var i = 0; i < result2.length; i++){
                         if(i + 1 > length){
                             break;
                         }
                         values2.push(result2[i]['nrgy']);
                     }
+                    
                     // result2.forEach((item)=> {
                     //     values2.push(item['bpm']);
                     //  });
@@ -109,9 +117,12 @@ app.post('/linreg', (req, res) => {
                     const regression = new linreg(values1, values2);
                     console.log(values2);
                     console.log("hi");
-                    let score = parseInt(regression.predict(80), 10); 
+                    console.log(average);
+                    
+                    let score = parseInt(regression.predict(parseInt(average, 10), 10)); 
                     console.log(score);
-                    var sql = 'Select title, artist FROM Songs WHERE bpm > ' + sqlDb.escape(score-2) + ' AND bpm < ' + sqlDb.escape(score+2);
+                    var sql = 'Select title, artist FROM Songs WHERE SongId NOT IN (Select SongId From SongsInPlaylist WHERE PlaylistId = ' + sqlDb.escape(id.playlistID) + 
+                    ') AND bpm > ' + sqlDb.escape(score-2) + ' AND bpm < ' + sqlDb.escape(score+2);
                     sqlDb.query(sql, id, (err, result3) => {
                         if (err) {
                             throw err;

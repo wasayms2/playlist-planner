@@ -4,6 +4,7 @@ import SongBrowse from './SongBrowse';
 function PlaylistCard({ id, title, api, update, viewonly, otherplaylists }) {
     const [name, setName] = useState('');
     const [songs, setSongs] = useState([]);
+    const [recommended, setRecommended] = useState(undefined);
 
     useEffect(() => {
         api.post(`/findsongsinplaylist`, {
@@ -39,7 +40,10 @@ function PlaylistCard({ id, title, api, update, viewonly, otherplaylists }) {
     }
 
     return (
-        <div>
+        <div style={{
+            position: 'relative',
+            padding: '2em',
+        }}>
             <h2>
                 {title} ({id})
                 { !viewonly &&
@@ -53,6 +57,14 @@ function PlaylistCard({ id, title, api, update, viewonly, otherplaylists }) {
             </h2>
             {songs.map((song) => (song && <SongBrowse playlists={otherplaylists} api={api} file={song.Filename} title={song.title} artist={song.artist} id={song.SongId} remove={viewonly ? false : true} playlistId={id} />))}
             {songs.length === 0 && <p>This playlist is empty...</p>}
+            <button style={{right: '2.5em'}} onClick={() => {
+                setRecommended({
+                    'title': 'Hey, Soul Sister',
+                    'artist': 'Train',
+                    'id': 700,
+                });
+            }}>Find a similar song!</button>
+            {recommended && <SongBrowse playlists={otherplaylists} api={api} file={recommended.Filename} title={recommended.title} artist={recommended.artist} id={recommended.SongId} playlistId={id} />}
         </div>
     );
 }

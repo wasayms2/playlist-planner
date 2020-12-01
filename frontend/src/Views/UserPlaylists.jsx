@@ -41,7 +41,7 @@ function UserPlaylists({ userId, api, playlists, setPlaylists }) {
             <button style={{margin: '10px'}} onClick={createPlaylist}>
                 Create!
             </button>
-            {playlists && playlists.map((playlist) => (<PlaylistCard id={playlist.PlaylistID} songs={[]} title={playlist.Name} api={api} update={updatePlaylists}/>))}
+            {playlists && playlists.map((playlist, idx) => (<PlaylistCard otherplaylists={[playlists[idx]]} id={playlist.PlaylistID} songs={[]} title={playlist.Name} api={api} update={updatePlaylists}/>))}
         </div>
         </>
     );

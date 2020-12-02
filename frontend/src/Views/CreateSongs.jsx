@@ -23,14 +23,14 @@ function CreateSongs({userId, setUserId, api}) {
         <div style={{margin: '20px'}}>
             <input
                 type='text'
-                placeholder='Title'
+                placeholder='Title (Required)'
                 name='plylst'
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 />
             <input
                 type='text'
-                placeholder='Artist'
+                placeholder='Artist (Required)'
                 name='plylst'
                 value={artist}
                 onChange={(e) => setArtist(e.target.value)}

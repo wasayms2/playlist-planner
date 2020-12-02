@@ -47,24 +47,27 @@ function PlaylistCard({ id, title, api, update, viewonly, otherplaylists }) {
             <h2>
                 {title} ({id})
                 { !viewonly &&
-                <input style={{margin: '10px'}} type='text' placeholder='New Playlist Name' value={name} onChange={(e) => (setName(e.target.value))}/> &&
-                <button style={{margin: '10px'}} onClick={changeName}>
+                <input style={{margin: '10px'}} type='text' placeholder='New Playlist Name' value={name} onChange={(e) => (setName(e.target.value))}/>}
+                { !viewonly && <button style={{margin: '10px'}} onClick={changeName}>
                     Edit Name
-                </button> &&
-                <button style={{margin: '10px'}} onClick={deletePlaylist}>
+                </button>}
+                { !viewonly && <button style={{margin: '10px'}} onClick={deletePlaylist}>
                     Delete Playlist
                 </button>}
             </h2>
             {songs.map((song) => (song && <SongBrowse playlists={otherplaylists} api={api} file={song.Filename} title={song.title} artist={song.artist} id={song.SongId} remove={viewonly ? false : true} playlistId={id} />))}
             {songs.length === 0 && <p>This playlist is empty...</p>}
-            <button style={{right: '2.5em'}} onClick={() => {
-                setRecommended({
-                    'title': 'Hey, Soul Sister',
-                    'artist': 'Train',
-                    'id': 700,
-                });
-            }}>Find a similar song!</button>
-            {recommended && <SongBrowse playlists={otherplaylists} api={api} file={recommended.Filename} title={recommended.title} artist={recommended.artist} id={recommended.SongId} playlistId={id} />}
+            {!viewonly && <button style={{right: '2.5em'}} onClick={() => {
+                api.post('/linreg', {
+                    'playlistID': id
+                }).then((res) => {
+                    setRecommended(res.data)
+                })
+                console.log(viewonly)
+                console.log(!viewonly)
+                console.log(typeof viewonly)
+            }}>Find similar songs!</button>}
+            {recommended && recommended.map((song) => (song && <SongBrowse playlists={otherplaylists} api={api} file={song.Filename} title={song.title} artist={song.artist} id={song.SongID} playlistId={id} />))}
         </div>
     );
 }

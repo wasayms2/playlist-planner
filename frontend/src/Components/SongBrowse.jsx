@@ -121,7 +121,7 @@ function SongBrowse({ title, artist, id, playlists, remove, playlistId, file, ap
                             setNewFile(res.data.filename)
                         })
                     }
-                }}>Upload Song</button> &&
+                }}>Upload Song</button>} {typeof file !== 'string' &&
                 <input type='file' onChange={(e) => {
                     setUploaded(e.target.files[0]);
                     console.log(e.target.files[0]);

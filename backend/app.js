@@ -227,9 +227,7 @@ app.post('/findusers', (req, res) => {
 });
 app.post('/findsongs', (req, res) => {
     let id = req.body;
-    let t = id.Search;
-    let a = id.Search;
-    let sql = 'SELECT title, artist, SongID, Filename FROM Songs WHERE title LIKE "%' + sqlDb.escape(t) + '%" or artist LIKE "%' + sqlDb.escape(a) + '%"';
+    let sql = 'SELECT title, artist, SongID, Filename FROM Songs WHERE title LIKE "%' + sqlDb.escape(id.Search) + '%" or artist LIKE "%' + sqlDb.escape(id.Search) + '%"';
     sql = sql.replace(/'/g, "");
     sqlDb.query(sql, id, (err, result) => {
         if (err) {
@@ -370,7 +368,7 @@ app.post('/userleaderboard', (req, res) => {
 });
 //find list of users and number of playlists each has
 app.get('/viewusers', (req, res) => {
-    let sql = 'SELECT Username, COUNT(PlaylistID) FROM Users NATURAL JOIN Playlists GROUP BY UserId ORDER BY COUNT(PlaylistID) DESC';
+    let sql = 'SELECT Username, COUNT(PlaylistID) FROM Users NATURAL JOIN Playlists GROUP BY UserId ORDER BY COUNT(PlaylistID) DESC LIMIT 5';
     sqlDb.query(sql, (err, result) => {
         if (err) {
             throw err;
@@ -383,7 +381,7 @@ app.get('/viewusers', (req, res) => {
 
 //find list of popular songs
 app.get('/popularsongs', (req, res) => {
-    let sql = 'SELECT Title, COUNT(PlaylistID) FROM SongsInPlaylist NATURAL JOIN Songs GROUP BY SongId  ORDER BY COUNT(PlaylistID) DESC';
+    let sql = 'SELECT Title, COUNT(PlaylistID) FROM SongsInPlaylist NATURAL JOIN Songs GROUP BY SongId  ORDER BY COUNT(PlaylistID) DESC LIMIT 10';
     sqlDb.query(sql, (err, result) => {
         if (err) {
             throw err;
